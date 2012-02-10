@@ -8,7 +8,7 @@ While on the face of it, 30 results back sounds like a great thing, but then I s
 
 I scrolled up and down a couple of times and started realizing that I didn't have 30 choices.  I actually had TWO choices: a "Unsanded Powder Grout" and a "Preimum Unsanded Powder Grout", and they come in a variety of colors and sizes.  So here I am, frantically scrolling up and down trying to build a mental model of all my choices, when I think "ah, facets should help me".  I knew I was doing just a bit of patching, so Iw atned the smallest size possible. And I knew I wanted a rich earthy red/brown color to match the existing concrete counter top.  Unfortunantly neither "Size" nor "Color" are facet options.
 
-So I thought, instead of trying to build a mental model of all thirty results, why don't I leverage clustering to see if I can pull out of the unstructured data some shared clusters that would act as facets?   This blog post is going to walk you through how I did this.
+So I thought, instead of trying to build a mental model of all thirty results, why don't I leverage clustering to see if I can pull out of the unstructured data some shared clusters that would act as facets?   This blog post and the accompanying code at "https://github.com/o19s/clustering-lowes-grouts" is going to walk you through how I did this.
 
 1) Extracting the Data
 I wrote a very simple Ruby script that downloads just the 30 results from Lowes.com and puts them into a Solr index.  If you check out the code from 
