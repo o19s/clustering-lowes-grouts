@@ -71,7 +71,7 @@ Oh, and just so you don't think this is an easy problem to solve, Amazon, who no
  
  
  
- _Like this blog post?  More at "www.opensourceconnections.com/blog":www.opensourceconnections.com/blog_
+ _Like this blog post?  More at "www.opensourceconnections.com/blog":http://www.opensourceconnections.com/blog_
 
 
 
