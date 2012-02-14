@@ -69,6 +69,9 @@ Here is a sense of what field collapsing on item number will do, we have 17 docu
 
 Oh, and just so you don't think this is an easy problem to solve, Amazon, who normally is a wonderful example of search done right, has the same exact problem for "Aqua Mix Grout Colorant":http://www.amazon.com/s/ref=sr_nr_scat_228926_ln?rh=n%3A228926%2Ck%3Agrout&keywords=grout&ie=UTF8&qid=1328909477&scn=228926&h=9d45480749457aa3cdff82998beda07f3a6316b7#/ref=nb_sb_noss?url=node%3D228926&field-keywords=aqua+mix+grout+colorant&rh=n%3A228013%2Cn%3A%21468240%2Cn%3A511228%2Cn%3A13397651%2Cn%3A228926%2Ck%3Aaqua+mix+grout+colorant
  
+ 
+ 
+ _Like this blog post?  More at "www.opensourceconnections.com/blog":www.opensourceconnections.com/blog_
 
 
 
