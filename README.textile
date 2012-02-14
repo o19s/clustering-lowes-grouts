@@ -26,7 +26,7 @@ I had turned on faceting on for the Item Number and Model Number fields, and set
 
 !https://img.skitch.com/20120210-x8nd43gtmu6h5tkppfb4q72xc9.png!
 
-I clicked "that facet":http://localhost:8983/solr/browse?&q=mapei+unsanded+grout&fq=item_number_s:%22Item+%23%3A+185276%22 and all of a sudden my clusters started looking more interesting!   I have 5 clusters identified: Unsanded Powdered Grout, Keracolor U Premimum Unsanded Grout, MAPEI 10 Lbs, MAPEI 25 Lbs, and Help Contribute to LEED Certification of Projects.   The first four clusters all look really great, as I can see that I have a set of products that are 10 lb., 25 lb., and either the Unsanded Powder Grout or the Premium Unsanded Grout.   Even the fifth facet about LEED certification could be useful in helping me identify products that contribute towards LEED certification.   One thing I noticed though was that the total unique number of clustered items didn't match the number of products returned by the faceted query.  Turns out the clustering results are returned via an AJAX call to the <code>/clustering</code> handler, and it has a limit of 10 rows.  So I bumped it up to 100 so I would see all the documents returned be clustered.
+I clicked "that facet":http://localhost:8983/solr/browse?&q=mapei+unsanded+grout&fq=item_number_s:%22Item+%23%3A+185276%22 and all of a sudden my clusters started looking more interesting!   I have 5 clusters identified: _Unsanded Powdered Grout_, _Keracolor U Premimum Unsanded Grout_, _MAPEI 10 Lbs_, _MAPEI 25 Lbs_, and _Help Contribute to LEED Certification of Projects_.   The first four clusters all look really great, as I can see that I have a set of products that are 10 lb., 25 lb., and either the Unsanded Powder Grout or the Premium Unsanded Grout.   Even the fifth facet about LEED certification could be useful in helping me identify products that contribute towards LEED certification.   One thing I noticed though was that the total unique number of clustered items didn't match the number of products returned by the faceted query.  Turns out the clustering results are returned via an AJAX call to the <code>/clustering</code> handler, and it has a limit of 10 rows.  So I bumped it up to 100 so I would see all the documents returned be clustered.
 
 4) Playing with Clustering Options
 The <code>/clustering</code> request handler makes it easy to play with the various clustering options.  The basic faceted query that we've been doing is:
@@ -39,13 +39,13 @@ The primary source of data is the title, followed by the product bullets.  If we
 
 Another way of filtering down the volume of suggested clusters is to only cluster on the title field by blanking out the snippets field:
 
-"http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22&carrot.snippet=":http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22&carrot.snippet= removes the clusters based on the product bullets like _Help Contribute to LEED Certification of Projects_.
+"http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22&carrot.snippet=":http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22&carrot.snippet= (notice the <code>carrot.snippet=</code> param to blank out snippets) removes the clusters based on the product bullets like _Help Contribute to LEED Certification of Projects_.
 
 Another way of changing what you get is to not try and filter what you cluster on by item number.  When you do a basic cluster on the full data set you get some great clusters on color:
 
 "http://localhost:8983/solr/clustering?&q=*:*":http://localhost:8983/solr/clustering?&q=*:*
 
-Lastly, you can play with different clustering engines, Solr comes with three of them, "Lingo (the default), STC, and a Kmeans":http://wiki.apache.org/solr/ClusteringComponent#carrot.algorithm option.  Try both the full data set and faceted data set to see the different types of results from the clustering algorithms.
+Lastly, you can play with different clustering engines, Solr comes with three of them, "Lingo (the default), STC, and Kmeans":http://wiki.apache.org/solr/ClusteringComponent#carrot.algorithm option.  Try both the full data set and the faceted data set to see the different types of results from the clustering algorithms.
 
 STC seems to be very similar to Lingo, but does provide some clusters that have multiple labels.  For example MAPEI 10 Lb and Premium Unsanded Grout, as well as a separate cluster of just MAPEI 10 lbs.
 "http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22&clustering.engine=stc":http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22&clustering.engine=stc
@@ -56,11 +56,11 @@ KMeans is all over the places.  Lots of labels, but I don't quite see the connec
 "http://localhost:8983/solr/clustering?&q=*:*&clustering.engine=kmeans":http://localhost:8983/solr/clustering?&q=*:*&clustering.engine=kmeans
 
 
-What does it mean?
+h2. What does it mean?
 
-Well, first and foremost, it means that clustering can be a discovery tool for figuring out potential tags for your documents.  In this specific case, it really drove home that instead of 30 products with different sizes, colors, and types, that there are two products from a users perspective: _MAPEI Unsanded Powdered Grout_ and _MAPEI Keracolor U Unsanded Grout+.   These two products should have a set of drop downs for size and color.  The simple bit of clustering we did suggested that size was something that could be extracted as potential tags.   
+Well, first and foremost, it means that clustering can be a discovery tool for figuring out potential tags for your documents.  In this specific case, it really drove home that instead of 30 products with different sizes, colors, and types, that there are two products from a users perspective: _MAPEI Unsanded Powdered Grout_ and _MAPEI Keracolor U Unsanded Grout_.   These two products should have a set of drop downs for size and color.  The simple bit of clustering we did suggested that size was something that could be extracted as potential tags.   
 
-You could model the products in Solr either as two documents, 1 for each product, and use dynamic fields to create multivalued fields for size and color.  Or, if you need to index everything de-normalized the way Lowes did it, if you have identified some tags, then you can use field collapsing so that even though you may have 14 products all with the same name, but different sizes and colors you collapse on the item number, and then provide those data as distinguishing drop downs.  
+There are two ways to model these relationships.  You could model the products in Solr either as two documents, one per product, and use dynamic fields to create multivalued fields for size and color.  Or, if you need to index everything de-normalized the way Lowes has done it, then if you have identified some tags as distinct fields, then you can use field collapsing so that even though you may have 14 products all with the same name, but different sizes and colors you collapse on the item number, and then provide those data as distinguishing drop downs.  
 
 Here is a sense of what field collapsing on item number will do, we have 17 documents.   16 are unique item numbers, plus the 17th is the collapsed version of the 14 products that all share item number 185276.
 
