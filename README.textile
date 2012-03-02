@@ -10,31 +10,35 @@ So I went onto Lowes's website and searched for "Mapei Unsanded Grout":http://ww
 
 !http://img.skitch.com/20120210-jabq1nkpd6c682ijm32sq5s86b.png!
 
-While on the face of it, 30 results for my query sounds like a great thing, when I scrolled down the page I was overwhelmed by all the choices!  It seemed like I had 30 different choices to pick from.  Go ahead, "click the link":http://www.lowes.com/SearchCatalogDisplay?storeId=10151&langId=-1&catalogId=10051&N=0&newSearch=true&Ntt=mapei+unsanded+grouts and try it yourself!  
+While on the face of it, 30 results for my query sounds like a great thing, when I scrolled down the page I was overwhelmed by all the choices!  It seemed like I had 30 different choices to pick from.  Go ahead, "click the link to search Lowes.com":http://www.lowes.com/SearchCatalogDisplay?storeId=10151&langId=-1&catalogId=10051&N=0&newSearch=true&Ntt=mapei+unsanded+grouts and try it yourself!  
 
-I scrolled up and down a couple of times and started realizing that I didn't have 30 choices.  I actually had TWO choices: a "Unsanded Powder Grout" and a "Premium Unsanded Powder Grout", and they come in a variety of colors and sizes.  So here I am, frantically scrolling up and down trying to build a mental model of all my choices, when I think "ah, facets should help me narrow down my choices".  I knew I was doing just a bit of patching of the countertop, so I wanted the smallest size possible. And I knew I wanted a rich earthy red/brown color to match the existing concrete counter top.  Unfortunately "Size" is not a facet option.
+I scrolled up and down a couple of times and started realizing that I didn't have 30 choices.  I actually had TWO choices: a "Unsanded Powder Grout" and a "Premium Unsanded Powder Grout", and they come in a variety of colors and sizes.  So here I am, frantically scrolling up and down trying to build a mental model of all my choices, when I think "ah, facets should help me narrow down my choices".  I knew I was doing just a bit of patching of the countertop, so I wanted the smallest amount of grout possible. And I knew I wanted a rich earthy red/brown color to match the existing concrete counter top.  Unfortunately "Size" is not a facet option offered by Lowes.
 
-So I thought, instead of trying to build a mental model of all thirty results, why don't I leverage clustering to see if I can pull out of the unstructured data some shared clusters that would act as facets?   This blog post and the "accompanying code":https://github.com/o19s/clustering-lowes-grouts are going to walk you through how I did this.
+So I thought, instead of trying to build a mental model of all thirty results in my head, why don't I leverage clustering to see if I can pull out of the unstructured data some shared clusters that could act as facets?   This blog post and the "accompanying code":https://github.com/o19s/clustering-lowes-grouts are going to walk you through the steps I took.
 
-1) Extracting the Data
-I wrote a very simple Ruby script that queries Lowes.com for "mapei unsanded grout", and the parses out the results and stores them into a Solr index.  Fire up Solr by running <code>./start.sh</code>.  Then run the script <code>ruby download_lowes_data.rb</code>.  Warning, you may have to install some gems!
+h3. 1) Extracting the Data
 
-2) View the Clusters
-I leveraged the Solr built in UI "Solritas" to expose the data about the clusters.  Browse to "http://localhost:8983/solr/browse":http://localhost:8983/solr/browse to see the results of clustering the data:
+I wrote a very simple Ruby script that queries Lowes.com for "mapei unsanded grout", and parses out the results and stores them in a Solr index.  Fire up Solr by running <code>./start.sh</code>.  Then run the script <code>ruby download_lowes_data.rb</code>.  Warning, you may have to install some gems!
+
+h3. 2) View the Clusters
+
+I leveraged the Solr built in UI "Solritas":http://wiki.apache.org/solr/Solritas to expose the data about the clusters.  Browse to "http://localhost:8983/solr/browse":http://localhost:8983/solr/browse to see the results of clustering the data:
 
 !http://img.skitch.com/20120210-bc5571kxdbhmrn37xsmqepaeib.png!
 
-It's not very exciting at this point.  I've told Solr to cluster primarily on the title, and secondarily on the product detail bullets.  And it has accurately identified that there are a number of grouts that come in the 10 lb. bag.  And that we have some premium grouts.  More useful would be those that are 10 lb., and those that are 25 lb. however!  Although, one thing to note is that by clustering, we did successfully extract the root product title for two of the items, and dropped the color name portion.  _MAPEI 10 lb. Keracolor U Premium Unsanded Grout - Lt.Almond #49_ and _MAPEI 10 lb. Keracolor U Premium Unsanded Grout - Chocolate #07_ both have the correct root title of _Keracolor U Premium Unsanded Grout_.
+It's not very exciting at this point.  I've told Solr to cluster primarily on the title, and secondarily on the product detail bullets.  And it has accurately identified that there are a number of grouts that come in the 10 lb. bag.  And that we have some premium grouts.  More useful clustering would be to seperate out those that are 10 lb., and those that are 25 lb.  Although, one thing to note is that by clustering, we did successfully extract the root product title for two of the items, and dropped the color name portion.  The products titled _MAPEI 10 lb. Keracolor U Premium Unsanded Grout - Lt.Almond #49_ and _MAPEI 10 lb. Keracolor U Premium Unsanded Grout - Chocolate #07_ both have the correct root title of _Keracolor U Premium Unsanded Grout_ in the clustering list.
 
 
-3) Adding in Facets
+h3. 3) Adding in Facets
+
 I had turned on faceting on for the Item Number and Model Number fields, and set the minimum facet count to display to 2 because I only care about item numbers or model numbers that are shared by multiple products.  While each product does have a unique Model Number, what was interesting to discover was that there are 14 products out of the 30 that share the same Item Number: 185276.  It appears that "Item Number" is potentially assigned by the manufacturer, and identifies a single product, regardless of size or color choice, while model number is the unique SKU for that product.
 
 !http://img.skitch.com/20120210-x8nd43gtmu6h5tkppfb4q72xc9.png!
 
 I clicked "that facet":http://localhost:8983/solr/browse?&q=mapei+unsanded+grout&fq=item_number_s:%22Item+%23%3A+185276%22 and all of a sudden my clusters started looking more interesting!   I have 5 clusters identified: _Unsanded Powdered Grout_, _Keracolor U Premimum Unsanded Grout_, _MAPEI 10 Lbs_, _MAPEI 25 Lbs_, and _Help Contribute to LEED Certification of Projects_.   The first four clusters all look really great, as I can see that I have a set of products that are 10 lb., 25 lb., and either the Unsanded Powder Grout or the Premium Unsanded Grout.   Even the fifth facet about LEED certification could be useful in helping me identify products that contribute towards LEED certification.   One thing I noticed though was that the total unique number of clustered items didn't match the number of products returned by the faceted query.  Turns out the clustering results are returned via an AJAX call to the <code>/clustering</code> handler, and it has a limit of 10 rows.  So I bumped it up to 100 so I would see all the documents returned be clustered.
 
-4) Playing with Clustering Options
+h3. 4) Playing with Clustering Options
+
 The <code>/clustering</code> request handler makes it easy to play with the various clustering options.  The basic faceted query that we've been doing is:
 
 "http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22":http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22
