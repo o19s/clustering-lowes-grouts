@@ -41,7 +41,7 @@ h3. 4) Playing with Clustering Options
 
 The <code>/clustering</code> request handler makes it easy to play with the various clustering options.  The basic faceted query that we've been doing is:
 
-<code>http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22</code>
+"http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22":http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22
 
 The primary source of data is the title, followed by the product bullets.  If we disable the carrot parameter for summarizing the product bullets, we get more clusters:
 
