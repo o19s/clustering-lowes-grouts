@@ -39,7 +39,34 @@ I clicked "the Item # 185276 facet":http://localhost:8983/solr/browse?&q=mapei+u
 
 !https://img.skitch.com/20120302-nq69pr7uqppe4886cumgiwsagb.png!
 
-I now have 5 clusters identified: _Unsanded Powdered Grout_, _Keracolor U Premimum Unsanded Grout_, _MAPEI 10 Lbs_, _MAPEI 25 Lbs_, and _Help Contribute to LEED Certification of Projects_.   The first four clusters all look really useful as discriminators, as I can see that I have a set of products that are 10 lb., 25 lb., and either the Unsanded Powder Grout or the Premium Unsanded Grout.   Even the fifth facet about LEED certification could be useful in helping me identify products that contribute towards LEED certification.  One thing I noticed though was that the total unique number of clustered items didn't match the number of products returned by the faceted query.  Turns out the clustering results are returned via an AJAX call to the <code>/clustering</code> handler, and it has a limit of 10 rows.  So I bumped it up to 100 so I would see all the documents in the corpus returned be clustered.
+I now have 5 clusters identified: _Unsanded Powdered Grout_, _Keracolor U Premimum Unsanded Grout_, _MAPEI 10 Lbs_, _MAPEI 25 Lbs_, and _Help Contribute to LEED Certification of Projects_.   The first four clusters all look really useful as discriminators, as I can see that I have a set of products that are 10 lb., 25 lb., and either the Unsanded Powder Grout or the Premium Unsanded Grout.   Even the fifth facet about LEED certification could be useful in helping me identify products that contribute towards LEED certification.  One thing I noticed though was that the total unique number of clustered items didn't match the number of products returned by the faceted query.  Turns out the clustering results are returned via an AJAX call to the <code>/clustering</code> handler, and it has a limit of 10 rows.  So I bumped it up to 100 so that the results of clustering would be over all the documents returned, not just the top 10.  Here is the configuration from <code>solrconfig.xml</code:
+	
+<code>
+	<requestHandler name="/clustering" startup="lazy" enable="${solr.clustering.enabled:false}" class="solr.SearchHandler">
+		<lst name="defaults">
+			<bool name="clustering">true</bool>
+			<str name="clustering.engine">default</str>
+			<bool name="clustering.results">true</bool>
+			<str name="carrot.title">title_t</str>
+			<str name="carrot.url">id</str>
+			<str name="carrot.snippet">product_bullets_txt</str>
+			<bool name="carrot.produceSummary">true</bool>
+			<bool name="carrot.outputSubClusters">false</bool>
+			<str name="defType">edismax</str>
+			<str name="qf">
+         text^0.5 product_bullets_txt^1.0 title_t^1.2 model_number_s^1.5 item_number_s^1.5 id^10.0
+       </str>
+			<str name="q.alt">*:*</str>
+			<str name="rows">100</str>
+			<str name="fl">*,score</str>
+		</lst>
+		<arr name="last-components">
+			<str>clustering</str>
+		</arr>
+	</requestHandler>
+	
+</code>
+
 
 h3. 4) Playing with Clustering Options
 
@@ -91,7 +118,7 @@ Oh, and just so you don't think this is an easy problem to solve, Amazon, who no
  
 h2. Next Steps
  
- So after all that, my colleage Dan suggested that I needed an example of showing the payout of clustering.  So I added a script to pull the clusters based on all the products and just the Item Number 185276 faceted options.  The script takes the suggested facets and dumps it back into each document record in the multi valued field <code>tags_txt</code>.
+ So after all that, my colleage Dan suggested that I needed an example of showing the payout of going through the effort of clustering.  So I added a script to pull the clusters based on all the products and just the Item Number 185276 faceted options.  The script takes the suggested facets and dumps it back into each document record in the multi valued field <code>tags_txt</code>.  Go ahead and run <code>ruby insert_clustered_data.rb</code>
  
  
  _Like this blog post?  More at "www.opensourceconnections.com/blog":http://www.opensourceconnections.com/blog_
