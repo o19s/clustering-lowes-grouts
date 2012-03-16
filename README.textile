@@ -130,7 +130,9 @@ h3. The Upshot of all this
 
 Compare the facet options from Lowes versus what I pulled out via clustering.  The top 4 facets are very useful to someone trying to filter down the set of grout choices, and were pulled out of the content:
 
-!upshot.png!
+!https://img.skitch.com/20120316-jm2yq3cwmaenkdb52a23gjhwd3.png!
+
+Clustering can be a very useful tool, the trick is to figure out which clusters make sense, and which ones don't.  And unfortunantly, that is still something that appears to require human judgement!
 
 
 
