@@ -11,8 +11,8 @@ Features:
     #end
 
 </div>
-<div>Item Number: #field('item_number_s')</div>
-<div>Model Number: #field('model_number_s')</div>
+<div>#field('item_number_s')</div>
+<div>#field('model_number_s')</div>
 <div class="mlt">
   #set($mlt = $mltResults.get($docId))
   #set($mltOn = $params.getBool('mlt'))

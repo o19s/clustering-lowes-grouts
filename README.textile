@@ -43,28 +43,26 @@ I now have 5 clusters identified: _Unsanded Powdered Grout_, _Keracolor U Premim
 	
 <pre>
 <code>
-	<requestHandler name="/clustering" startup="lazy" enable="${solr.clustering.enabled:false}" class="solr.SearchHandler">
-		<lst name="defaults">
-			<bool name="clustering">true</bool>
-			<str name="clustering.engine">default</str>
-			<bool name="clustering.results">true</bool>
-			<str name="carrot.title">title_t</str>
-			<str name="carrot.url">id</str>
-			<str name="carrot.snippet">product_bullets_txt</str>
-			<bool name="carrot.produceSummary">true</bool>
-			<bool name="carrot.outputSubClusters">false</bool>
-			<str name="defType">edismax</str>
-			<str name="qf">
-         text^0.5 product_bullets_txt^1.0 title_t^1.2 model_number_s^1.5 item_number_s^1.5 id^10.0
-       </str>
-			<str name="q.alt">*:*</str>
-			<str name="rows">100</str>
-			<str name="fl">*,score</str>
-		</lst>
-		<arr name="last-components">
-			<str>clustering</str>
-		</arr>
-	</requestHandler>
+<requestHandler name="/clustering" startup="lazy" enable="${solr.clustering.enabled:false}" class="solr.SearchHandler">
+	<lst name="defaults">
+		<bool name="clustering">true</bool>
+		<str name="clustering.engine">default</str>
+		<bool name="clustering.results">true</bool>
+		<str name="carrot.title">title_t</str>
+		<str name="carrot.url">id</str>
+		<str name="carrot.snippet">product_bullets_txt</str>
+		<bool name="carrot.produceSummary">true</bool>
+		<bool name="carrot.outputSubClusters">false</bool>
+		<str name="defType">edismax</str>
+		<str name="qf">text^0.5 product_bullets_txt^1.0 title_t^1.2 model_number_s^1.5 item_number_s^1.5 id^10.0</str>
+		<str name="q.alt">*:*</str>
+		<str name="rows">100</str>
+		<str name="fl">*,score</str>
+	</lst>
+	<arr name="last-components">
+		<str>clustering</str>
+	</arr>
+</requestHandler>
 	
 </code>
 </pre>
@@ -72,7 +70,7 @@ I now have 5 clusters identified: _Unsanded Powdered Grout_, _Keracolor U Premim
 
 h3. 4) Playing with Clustering Options
 
-The <code>/clustering</code> request handler makes it easy to play with the various clustering options.  The basic faceted query that we've been doing is:
+The <code>/clustering</code> request handler makes it easy to play with the various clustering options.  The clustering output is below the <code><result name="response"/></code> search results XML stanza, so scroll down!  The basic faceted query that we've been doing is:
 
 "http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22":http://localhost:8983/solr/clustering?&q=*:*&fq=item_number_s:%22Item+%23%3A+185276%22
 
@@ -120,7 +118,15 @@ Oh, and just so you don't think this is an easy problem to solve, Amazon, who no
  
 h2. Next Steps
  
- So after all that, my colleage Dan suggested that I needed an example of showing the payout of going through the effort of clustering.  So I added a script to pull the clusters based on all the products and just the Item Number 185276 faceted options.  The script takes the suggested facets and dumps it back into each document record in the multi valued field <code>tags_txt</code>.  Go ahead and run <code>ruby insert_clustered_data.rb</code>
+ So after all that, my colleage Dan suggested that I needed an example of showing the payout of going through the effort of clustering.  So I added a script that pulls back the clusters and stores them in a multi valued field <code>tags_txt</code>.  <code>tags_txt</code> can now be treated as traditional facetsin the user interface. The two choices that seemed most interesting are clustering on all the products and just the products that share the Item Number 185276.  
+ 
+Go ahead and run <code>ruby insert_clustered_data.rb</code>  <code>tags_smv</code> is a multivalued string field that is perfect for faceting on, and should now have all the cluster labels stored.   Reload the "browse interface":http://localhost:8983/solr/browse?&q= and you will now have a list of very reasonable facets to use derived by clustering:
+
+!https://img.skitch.com/20120316-kqp2d6q7ejh5xgmkj1fiy3prfg.png!
+
+Because in <code>solrconfig.xml</code> the <code>facet.mincount=2</code>, any completely unique clusters are hidden from the list of facetable options, which reduces the amount of noise in the <code>tags_smv</code> list.
+ 
+ 
  
  
  _Like this blog post?  More at "www.opensourceconnections.com/blog":http://www.opensourceconnections.com/blog_

@@ -110,6 +110,7 @@
 			<str name="facet">on</str>
 			<str name="facet.field">item_number_s</str>
 			<str name="facet.field">model_number_s</str>
+			<str name="facet.field">tags_smv</str>
 			<str name="facet.mincount">2</str>
 			<str name="hl">on</str>
 			<str name="hl.fl">text title_s product_bullets_txt</str>
