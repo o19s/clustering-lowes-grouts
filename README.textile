@@ -124,7 +124,17 @@ Go ahead and run <code>ruby insert_clustered_data.rb</code>  <code>tags_smv</cod
 
 !https://img.skitch.com/20120316-kqp2d6q7ejh5xgmkj1fiy3prfg.png!
 
-Because in <code>solrconfig.xml</code> the <code>facet.mincount=2</code>, any completely unique clusters are hidden from the list of facetable options, which reduces the amount of noise in the <code>tags_smv</code> list.
+Because we configured <code>facet.mincount=2</code> in <code>solrconfig.xml</code> for the browse handler, any completely unique clusters are hidden from the list of facetable options, which reduces the amount of noise in the <code>tags_smv</code> listing.
+
+h3. The Upshot of all this
+
+Compare the facet options from Lowes versus what I pulled out via clustering.  The top 4 facets are very useful to someone trying to filter down the set of grout choices, and were pulled out of the content:
+
+!upshot.png!
+
+
+
+
  
  
  
